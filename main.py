@@ -8,24 +8,26 @@ class Grade(Enum):
 
 def check(guess, secret_word, words):
     if not guess in words:
-        return "Incorrect guess"
+        return "Incorrect guess", False
     
     remaining = list(secret_word)
-    res = []
+    res = [Grade.Incorrect] * 5
     
-    correct = True
-
     for i in range(5):
         if guess[i] == remaining[i]:
             remaining[i] = '#'
-            res.append(Grade.Correct)
-        elif guess[i] in remaining:
+            res[i] = Grade.Correct
+
+    for i in range(5):
+        if res[i] == Grade.Correct:
+            continue
+        if guess[i] in remaining:
             remaining[remaining.index(guess[i])] = '#'
-            res.append(Grade.Wrong_Pos)
-            correct = False
-        else:
-            res.append(Grade.Incorrect)
-            correct = False
+            res[i] = Grade.Wrong_Pos
+            
+    correct = True            
+    if Grade.Incorrect in res or Grade.Wrong_Pos in res:
+        correct = False
 
     return res, correct
         
@@ -35,6 +37,8 @@ with open("words.txt") as f:
 words = words.split('\n')
 
 secret_word = words[random.randint(0, len(words)-1)]
+
+secret_word = "aaaab"
 print(secret_word)
 
 for i in range(6): 
