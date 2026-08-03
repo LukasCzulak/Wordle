@@ -21,6 +21,12 @@ Keeps track of letter that
 - MUST be at a certain position
 - MUST be included
 - are forbidden to be used at certain positions
-Then filters based on these 3 constraints
+Then filters based on these 3 constraints and pick a random word from the remaining words
 
 Usual Winrate: ~80%
+
+
+## HeuristicSolver
+Uses the same logic as LetterSolver, but now doesn't simply guess a random valid word, but instead use a heuristic to count all remaining letters, then build a ranking system and guess the best word based on this heuristic score, e.g. always guess "aeros" first, since 'a', 'e', 'r', 'o' and 's' appear very often in the initial list. 
+
+Usual Winrate: ~88%
