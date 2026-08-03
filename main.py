@@ -3,9 +3,10 @@ import random
 from rich.progress import Progress
 
 from game import Game
+from grade import Grade
 from solvers.BaseSolver import BaseSolver
 from solvers.RandomSolver import RandomSolver
-from solvers.SemiRandomSolver import SemiRandomSolver
+from solvers.FilterSolver import FilterSolver
     
 @dataclass    
 class EvaluationResult:
@@ -74,16 +75,28 @@ def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None
     )
         
 game = Game()
-solver = SemiRandomSolver(game.valid_words)
+solver = FilterSolver(game.valid_words)
 
-result = benchmark(solver, num_samples=100)
+LARGE_TEST = False
+if LARGE_TEST:
+    result = benchmark(solver)
+else: 
+    result = benchmark(solver, num_samples=1000)
 
 DEBUG = True
+
+GRADE_MAP = {
+    Grade.Correct: "🟩",
+    Grade.Wrong_Pos: "🟨",
+    Grade.Incorrect: "⬛",
+}
+
 if DEBUG:
     print(f"Secret word: {result.secret_word}")
     print("guesses:")
-    for entry in result.last_history:
-        print(entry) 
+    for word, grades in result.last_history:
+        tiles = "".join(GRADE_MAP[g] for g in grades)
+        print(f"{word}  {tiles}")
 
 print(f"solver \'{result.solver_name}\' achieved following stats:\n")
 print(f"total games played: {result.games_played}")
