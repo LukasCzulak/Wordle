@@ -1,49 +1,96 @@
+from dataclasses import dataclass
 import random
-from enum import Enum
+from rich.progress import Progress
 
-class Grade(Enum):
-    Incorrect = 0
-    Wrong_Pos = 1
-    Correct = 2
-
-def check(guess, secret_word, words):
-    if not guess in words:
-        return "Incorrect guess", False
+from game import Game
+from solvers.BaseSolver import BaseSolver
+from solvers.RandomSolver import RandomSolver
+from solvers.SemiRandomSolver import SemiRandomSolver
     
-    remaining = list(secret_word)
-    res = [Grade.Incorrect] * 5
+@dataclass    
+class EvaluationResult:
+    solver_name: str
+    games_played: int
+    win_rate: float
+    avg_attempts: float
+    distribution: dict
+    last_history: list
+    secret_word: str
+
+def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None = None, seed: int | None = None) -> EvaluationResult:
+    distribution = {}
+    for i in range(1, max_attempts + 1):
+        distribution[i] = 0
+    distribution['Failed'] = 0
+    total_attempts = 0
     
-    for i in range(5):
-        if guess[i] == remaining[i]:
-            remaining[i] = '#'
-            res[i] = Grade.Correct
-
-    for i in range(5):
-        if res[i] == Grade.Correct:
-            continue
-        if guess[i] in remaining:
-            remaining[remaining.index(guess[i])] = '#'
-            res[i] = Grade.Wrong_Pos
-            
-    correct = True            
-    if Grade.Incorrect in res or Grade.Wrong_Pos in res:
-        correct = False
-
-    return res, correct
+    game = Game()
+    
+    words_to_test = game.valid_words
+    if num_samples is not None and num_samples < len(game.valid_words):
+        if seed is not None:
+            random.seed(seed)
+        words_to_test = random.sample(words_to_test, num_samples)
+    
+    with Progress() as progress_bar:
+        t = progress_bar.add_task("Benchmark running", total=len(words_to_test))
         
-with open("words.txt") as f:
-    words = f.read()
+        for word in words_to_test:
+            game.reset()
+            game.secret_word = word
+            solver.reset()
+            
+            progress_bar.advance(t, 1)
+            
+            while not game.over():
+                guessed_word = solver.choose_word(game.history)
+                game.guess(guessed_word)
+                
+            if game.won:
+                distribution[game.attempts] += 1
+                total_attempts += game.attempts
+            else:
+                distribution['Failed'] += 1
+            
+    games_played = len(words_to_test)
+    wins = games_played - distribution['Failed']
+    win_rate = (wins / games_played) * 100
+    last_history = list(game.history)
+    last_word = game.secret_word
+        
+    if wins > 0:
+        avg_attempts = total_attempts / wins
+    else:
+        avg_attempts = 7.0
+    
+    return EvaluationResult(
+        solver.name,
+        games_played,
+        win_rate,
+        avg_attempts,
+        distribution,
+        last_history,
+        last_word
+    )
+        
+game = Game()
+solver = SemiRandomSolver(game.valid_words)
 
-words = words.split('\n')
+result = benchmark(solver, num_samples=100)
 
-secret_word = words[random.randint(0, len(words)-1)]
+DEBUG = True
+if DEBUG:
+    print(f"Secret word: {result.secret_word}")
+    print("guesses:")
+    for entry in result.last_history:
+        print(entry) 
 
-secret_word = "aaaab"
-print(secret_word)
-
-for i in range(6): 
-    guess = input()
-    result, correct = check(guess, secret_word, words)
-    print(result)
-    if correct:
-        break
+print(f"solver \'{result.solver_name}\' achieved following stats:\n")
+print(f"total games played: {result.games_played}")
+print(f"winrate: {result.win_rate:.5}%")
+print(f"average attempts when winning: {result.avg_attempts:.5}")
+print(f"distribution:")
+print(f"---")
+for i in range(1, 7):
+    print(f"{i}: {result.distribution[i]}")
+print(f"Failed: {result.distribution['Failed']}")
