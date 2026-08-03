@@ -5,7 +5,7 @@ from grade import Grade
 
 class FilterSolver(BaseSolver):
     def __init__(self, word_list):
-        self.name = "RandomSolver"
+        self.name = "FilterSolver"
         self.initial_word_list = word_list
         self.word_list = word_list
         self.letters_in_word: set = set({})

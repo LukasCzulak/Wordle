@@ -7,6 +7,7 @@ from grade import Grade
 from solvers.BaseSolver import BaseSolver
 from solvers.RandomSolver import RandomSolver
 from solvers.FilterSolver import FilterSolver
+from solvers.RemainsSolver import RemainsSolver
     
 @dataclass    
 class EvaluationResult:
@@ -75,13 +76,13 @@ def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None
     )
         
 game = Game()
-solver = FilterSolver(game.valid_words)
+solver = RemainsSolver(game.valid_words)
 
 LARGE_TEST = False
 if LARGE_TEST:
     result = benchmark(solver)
 else: 
-    result = benchmark(solver, num_samples=1000)
+    result = benchmark(solver, num_samples=100)
 
 DEBUG = True
 
