@@ -10,6 +10,7 @@ from solvers.FilterSolver import FilterSolver
 from solvers.RemainsSolver import RemainsSolver
 from solvers.LetterSolver import LetterSolver
 from solvers.HeuristicSolver import HeuristicSolver
+from solvers.ImprovedHeuristicSolver import ImprovedHeuristicSolver
     
 @dataclass    
 class EvaluationResult:
@@ -78,7 +79,7 @@ def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None
     )
         
 game = Game()
-solver = HeuristicSolver(game.valid_words)
+solver = ImprovedHeuristicSolver(game.valid_words)
 
 LARGE_TEST = False
 if LARGE_TEST:
