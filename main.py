@@ -79,9 +79,9 @@ def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None
     )
         
 game = Game()
-solver = ImprovedHeuristicSolver(game.valid_words)
+solver = LetterSolver(game.valid_words)
 
-LARGE_TEST = False
+LARGE_TEST = True
 if LARGE_TEST:
     result = benchmark(solver)
 else: 

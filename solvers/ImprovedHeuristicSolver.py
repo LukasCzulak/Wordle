@@ -7,7 +7,7 @@ ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 
 class ImprovedHeuristicSolver(BaseSolver):
     def __init__(self, word_list):
-        self.name = "HeuristicSolver"
+        self.name = "ImprovedHeuristicSolver"
         self.initial_word_list = word_list
         self.reset()
         

@@ -23,16 +23,19 @@ Keeps track of letter that
 - are forbidden to be used at certain positions
 Then filters based on these 3 constraints and pick a random word from the remaining words
 
-Usual Winrate: ~80%
+Usual Winrate: ~81.7%
+Average Attempts: ~4.69
 
 
 ## HeuristicSolver
 Uses the same logic as LetterSolver, but now doesn't simply guess a random valid word, but instead use a heuristic to count all remaining letters, then build a ranking system and guess the best word based on this heuristic score, e.g. always guess "aeros" first, since 'a', 'e', 'r', 'o' and 's' appear very often in the initial list. 
 
-Usual Winrate: ~88%
+Usual Winrate: ~86.7%
+Average Attempts: ~4.31
 
 
 ## ImprovedHeuristicSolver
 An upgrade to HeuristicSolver: Instead of counting all letters over all words, now count letters for every position, thus making the guesses smarter (starting word now is "pares", since 'a' and 'e' are much more likely to be at the 2nd and 4th position instead of 1st and 2nd as in "aeros")
 
-Usual Winrate: ~90%
+Usual Winrate: ~88.4%
+Average Attempts: ~4.37
