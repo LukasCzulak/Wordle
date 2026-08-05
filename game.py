@@ -45,10 +45,14 @@ class Game:
     def select_secret_word(self):
         secret_word = self.valid_words[random.randint(0, len(self.valid_words)-1)]
         return secret_word
+    
+    
+    def valid_word(self, word: str) -> bool:
+        return word in self.valid_words
         
         
     def guess(self, word: str) -> tuple[list[Grade], bool]:
-        if not word in self.valid_words:
+        if not self.valid_word(word):
             print("\'word\' is not a valid word!")
             return 
 

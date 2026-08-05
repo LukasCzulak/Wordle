@@ -11,6 +11,7 @@ from solvers.RemainsSolver import RemainsSolver
 from solvers.LetterSolver import LetterSolver
 from solvers.HeuristicSolver import HeuristicSolver
 from solvers.ImprovedHeuristicSolver import ImprovedHeuristicSolver
+from solvers.DQNLetterSolver import DQNLetterSolver
     
 @dataclass    
 class EvaluationResult:
@@ -79,13 +80,15 @@ def benchmark(solver: BaseSolver, max_attempts: int = 6, num_samples: int | None
     )
         
 game = Game()
-solver = LetterSolver(game.valid_words)
+solver = DQNLetterSolver(game.valid_words)
+
+solver.load_model()
 
 LARGE_TEST = True
 if LARGE_TEST:
     result = benchmark(solver)
 else: 
-    result = benchmark(solver, num_samples=100)
+    result = benchmark(solver, num_samples=1000)
 
 DEBUG = True
 

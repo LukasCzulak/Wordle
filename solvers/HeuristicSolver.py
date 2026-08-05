@@ -1,5 +1,3 @@
-import random 
-
 from solvers.BaseSolver import BaseSolver
 from grade import Grade
 

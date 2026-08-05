@@ -39,3 +39,12 @@ An upgrade to HeuristicSolver: Instead of counting all letters over all words, n
 
 Usual Winrate: ~88.4%
 Average Attempts: ~4.37
+
+
+## DQNLetterSolver
+Model: Have the model guess a single letter 5 times in a row to create a word. 
+Punish it for trying out a word that is not valid
+Reward for getting a correct word, green letters and yellow letters
+Doesn't work at all...
+
+Usual Winrate: ~0.06%
